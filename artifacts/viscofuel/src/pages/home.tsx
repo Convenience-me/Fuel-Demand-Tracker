@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Fuel, Clock, ShieldAlert, Calendar, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Clock, ShieldAlert, Calendar, ArrowRight, CheckCircle2 } from "lucide-react";
 
 import { useCreateWaitlistEntry, useUpdateWaitlistName, useTrackPageView } from "@workspace/api-client-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -108,7 +108,6 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-md">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2 text-primary">
-            <Fuel className="w-8 h-8" />
             <span className="font-display font-bold text-2xl tracking-tight text-white">VISCO<span className="text-primary">FUEL</span></span>
           </div>
           <Button variant="outline" className="hidden sm:flex border-primary text-primary hover:bg-primary hover:text-white" onClick={() => document.getElementById("waitlist")?.scrollIntoView({ behavior: "smooth" })}>
@@ -264,7 +263,6 @@ export default function Home() {
       <footer className="py-12 text-center border-t border-border/50 text-muted-foreground text-sm">
         <div className="container mx-auto px-6 flex flex-col items-center justify-center space-y-4">
           <div className="flex items-center gap-2 text-foreground/50 opacity-50 grayscale">
-            <Fuel className="w-5 h-5" />
             <span className="font-display font-bold tracking-tight">VISCOFUEL</span>
           </div>
           <p>Visco Fuel Nairobi - Beta Test Phase - Not live yet</p>
