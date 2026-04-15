@@ -8,3 +8,41 @@
 export interface HealthStatus {
   status: string;
 }
+
+export interface CreateWaitlistEntry {
+  neighborhood: string;
+  phone: string;
+}
+
+export interface UpdateWaitlistName {
+  name: string;
+}
+
+export interface WaitlistEntry {
+  id: number;
+  neighborhood: string;
+  phone: string;
+  name?: string | null;
+  createdAt: string;
+}
+
+export interface TrackPageView {
+  page: string;
+}
+
+export interface PageView {
+  id: number;
+  page: string;
+  createdAt: string;
+}
+
+export interface AnalyticsSummary {
+  totalPageViews: number;
+  totalSignups: number;
+  signupsWithName: number;
+  conversionRate: number;
+}
+
+export interface ErrorResponse {
+  message: string;
+}

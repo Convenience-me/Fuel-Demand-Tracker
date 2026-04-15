@@ -14,3 +14,51 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * Records neighborhood and phone number
+ * @summary Create a waitlist entry (Step 1)
+ */
+export const CreateWaitlistEntryBody = zod.object({
+  neighborhood: zod.string(),
+  phone: zod.string(),
+});
+
+/**
+ * Adds name to an existing waitlist entry
+ * @summary Update waitlist entry name (Step 2)
+ */
+export const UpdateWaitlistNameParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdateWaitlistNameBody = zod.object({
+  name: zod.string(),
+});
+
+export const UpdateWaitlistNameResponse = zod.object({
+  id: zod.number(),
+  neighborhood: zod.string(),
+  phone: zod.string(),
+  name: zod.string().nullish(),
+  createdAt: zod.string(),
+});
+
+/**
+ * Records a page view event
+ * @summary Track a page view
+ */
+export const TrackPageViewBody = zod.object({
+  page: zod.string(),
+});
+
+/**
+ * Returns page views vs waitlist signups count
+ * @summary Get analytics summary
+ */
+export const GetAnalyticsSummaryResponse = zod.object({
+  totalPageViews: zod.number(),
+  totalSignups: zod.number(),
+  signupsWithName: zod.number(),
+  conversionRate: zod.number(),
+});

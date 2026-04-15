@@ -10,6 +10,10 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: waitlist
+    description: Waitlist operations
+  - name: analytics
+    description: Analytics operations
 paths:
   /healthz:
     get:
@@ -24,6 +28,94 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /waitlist:
+    post:
+      operationId: createWaitlistEntry
+      tags: [waitlist]
+      summary: Create a waitlist entry (Step 1)
+      description: Records neighborhood and phone number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWaitlistEntry"
+      responses:
+        "201":
+          description: Entry created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WaitlistEntry"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /waitlist/{id}/name:
+    patch:
+      operationId: updateWaitlistName
+      tags: [waitlist]
+      summary: Update waitlist entry name (Step 2)
+      description: Adds name to an existing waitlist entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWaitlistName"
+      responses:
+        "200":
+          description: Entry updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WaitlistEntry"
+        "404":
+          description: Entry not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /analytics/track:
+    post:
+      operationId: trackPageView
+      tags: [analytics]
+      summary: Track a page view
+      description: Records a page view event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrackPageView"
+      responses:
+        "201":
+          description: Page view tracked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PageView"
+  /analytics/summary:
+    get:
+      operationId: getAnalyticsSummary
+      tags: [analytics]
+      summary: Get analytics summary
+      description: Returns page views vs waitlist signups count
+      responses:
+        "200":
+          description: Analytics summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsSummary"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +125,82 @@ components:
           type: string
       required:
         - status
-
+    CreateWaitlistEntry:
+      type: object
+      properties:
+        neighborhood:
+          type: string
+        phone:
+          type: string
+      required:
+        - neighborhood
+        - phone
+    UpdateWaitlistName:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    WaitlistEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        neighborhood:
+          type: string
+        phone:
+          type: string
+        name:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+      required:
+        - id
+        - neighborhood
+        - phone
+        - createdAt
+    TrackPageView:
+      type: object
+      properties:
+        page:
+          type: string
+      required:
+        - page
+    PageView:
+      type: object
+      properties:
+        id:
+          type: integer
+        page:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - page
+        - createdAt
+    AnalyticsSummary:
+      type: object
+      properties:
+        totalPageViews:
+          type: integer
+        totalSignups:
+          type: integer
+        signupsWithName:
+          type: integer
+        conversionRate:
+          type: number
+      required:
+        - totalPageViews
+        - totalSignups
+        - signupsWithName
+        - conversionRate
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message

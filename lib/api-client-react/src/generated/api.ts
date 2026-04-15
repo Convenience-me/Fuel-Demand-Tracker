@@ -5,18 +5,30 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
+  MutationFunction,
   QueryFunction,
   QueryKey,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
 
-import type { HealthStatus } from "./api.schemas";
+import type {
+  AnalyticsSummary,
+  CreateWaitlistEntry,
+  ErrorResponse,
+  HealthStatus,
+  PageView,
+  TrackPageView,
+  UpdateWaitlistName,
+  WaitlistEntry,
+} from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
-import type { ErrorType } from "../custom-fetch";
+import type { ErrorType, BodyType } from "../custom-fetch";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
@@ -92,6 +104,344 @@ export function useHealthCheck<
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getHealthCheckQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * Records neighborhood and phone number
+ * @summary Create a waitlist entry (Step 1)
+ */
+export const getCreateWaitlistEntryUrl = () => {
+  return `/api/waitlist`;
+};
+
+export const createWaitlistEntry = async (
+  createWaitlistEntry: CreateWaitlistEntry,
+  options?: RequestInit,
+): Promise<WaitlistEntry> => {
+  return customFetch<WaitlistEntry>(getCreateWaitlistEntryUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createWaitlistEntry),
+  });
+};
+
+export const getCreateWaitlistEntryMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createWaitlistEntry>>,
+    TError,
+    { data: BodyType<CreateWaitlistEntry> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createWaitlistEntry>>,
+  TError,
+  { data: BodyType<CreateWaitlistEntry> },
+  TContext
+> => {
+  const mutationKey = ["createWaitlistEntry"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createWaitlistEntry>>,
+    { data: BodyType<CreateWaitlistEntry> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createWaitlistEntry(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateWaitlistEntryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createWaitlistEntry>>
+>;
+export type CreateWaitlistEntryMutationBody = BodyType<CreateWaitlistEntry>;
+export type CreateWaitlistEntryMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Create a waitlist entry (Step 1)
+ */
+export const useCreateWaitlistEntry = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createWaitlistEntry>>,
+    TError,
+    { data: BodyType<CreateWaitlistEntry> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createWaitlistEntry>>,
+  TError,
+  { data: BodyType<CreateWaitlistEntry> },
+  TContext
+> => {
+  return useMutation(getCreateWaitlistEntryMutationOptions(options));
+};
+
+/**
+ * Adds name to an existing waitlist entry
+ * @summary Update waitlist entry name (Step 2)
+ */
+export const getUpdateWaitlistNameUrl = (id: number) => {
+  return `/api/waitlist/${id}/name`;
+};
+
+export const updateWaitlistName = async (
+  id: number,
+  updateWaitlistName: UpdateWaitlistName,
+  options?: RequestInit,
+): Promise<WaitlistEntry> => {
+  return customFetch<WaitlistEntry>(getUpdateWaitlistNameUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateWaitlistName),
+  });
+};
+
+export const getUpdateWaitlistNameMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateWaitlistName>>,
+    TError,
+    { id: number; data: BodyType<UpdateWaitlistName> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateWaitlistName>>,
+  TError,
+  { id: number; data: BodyType<UpdateWaitlistName> },
+  TContext
+> => {
+  const mutationKey = ["updateWaitlistName"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateWaitlistName>>,
+    { id: number; data: BodyType<UpdateWaitlistName> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateWaitlistName(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateWaitlistNameMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateWaitlistName>>
+>;
+export type UpdateWaitlistNameMutationBody = BodyType<UpdateWaitlistName>;
+export type UpdateWaitlistNameMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Update waitlist entry name (Step 2)
+ */
+export const useUpdateWaitlistName = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateWaitlistName>>,
+    TError,
+    { id: number; data: BodyType<UpdateWaitlistName> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateWaitlistName>>,
+  TError,
+  { id: number; data: BodyType<UpdateWaitlistName> },
+  TContext
+> => {
+  return useMutation(getUpdateWaitlistNameMutationOptions(options));
+};
+
+/**
+ * Records a page view event
+ * @summary Track a page view
+ */
+export const getTrackPageViewUrl = () => {
+  return `/api/analytics/track`;
+};
+
+export const trackPageView = async (
+  trackPageView: TrackPageView,
+  options?: RequestInit,
+): Promise<PageView> => {
+  return customFetch<PageView>(getTrackPageViewUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(trackPageView),
+  });
+};
+
+export const getTrackPageViewMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof trackPageView>>,
+    TError,
+    { data: BodyType<TrackPageView> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof trackPageView>>,
+  TError,
+  { data: BodyType<TrackPageView> },
+  TContext
+> => {
+  const mutationKey = ["trackPageView"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof trackPageView>>,
+    { data: BodyType<TrackPageView> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return trackPageView(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type TrackPageViewMutationResult = NonNullable<
+  Awaited<ReturnType<typeof trackPageView>>
+>;
+export type TrackPageViewMutationBody = BodyType<TrackPageView>;
+export type TrackPageViewMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Track a page view
+ */
+export const useTrackPageView = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof trackPageView>>,
+    TError,
+    { data: BodyType<TrackPageView> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof trackPageView>>,
+  TError,
+  { data: BodyType<TrackPageView> },
+  TContext
+> => {
+  return useMutation(getTrackPageViewMutationOptions(options));
+};
+
+/**
+ * Returns page views vs waitlist signups count
+ * @summary Get analytics summary
+ */
+export const getGetAnalyticsSummaryUrl = () => {
+  return `/api/analytics/summary`;
+};
+
+export const getAnalyticsSummary = async (
+  options?: RequestInit,
+): Promise<AnalyticsSummary> => {
+  return customFetch<AnalyticsSummary>(getGetAnalyticsSummaryUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetAnalyticsSummaryQueryKey = () => {
+  return [`/api/analytics/summary`] as const;
+};
+
+export const getGetAnalyticsSummaryQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAnalyticsSummary>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getAnalyticsSummary>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetAnalyticsSummaryQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAnalyticsSummary>>
+  > = ({ signal }) => getAnalyticsSummary({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAnalyticsSummary>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetAnalyticsSummaryQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAnalyticsSummary>>
+>;
+export type GetAnalyticsSummaryQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get analytics summary
+ */
+
+export function useGetAnalyticsSummary<
+  TData = Awaited<ReturnType<typeof getAnalyticsSummary>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getAnalyticsSummary>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetAnalyticsSummaryQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;
