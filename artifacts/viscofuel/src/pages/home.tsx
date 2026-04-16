@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Clock, ShieldAlert, Calendar, ArrowRight, CheckCircle2 } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Clock, ShieldAlert, Calendar, ArrowRight, CheckCircle2, Sun, Moon } from "lucide-react";
 
 import { useCreateWaitlistEntry, useUpdateWaitlistName, useTrackPageView } from "@workspace/api-client-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -34,6 +35,7 @@ const NEIGHBORHOODS = [
 
 export default function Home() {
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
   const trackPageView = useTrackPageView();
   const createWaitlist = useCreateWaitlistEntry();
   const updateName = useUpdateWaitlistName();
@@ -107,12 +109,21 @@ export default function Home() {
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-md">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-primary">
-            <span className="font-display font-bold text-2xl tracking-tight text-white">VISCO<span className="text-primary">FUEL</span></span>
+          <div className="flex items-center gap-2">
+            <span className="font-display font-bold text-2xl tracking-tight text-foreground">VISCO<span className="text-primary">FUEL</span></span>
           </div>
-          <Button variant="outline" className="hidden sm:flex border-primary text-primary hover:bg-primary hover:text-white" onClick={() => document.getElementById("waitlist")?.scrollIntoView({ behavior: "smooth" })}>
-            Join Beta
-          </Button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="w-9 h-9 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <Sun className="w-4 h-4 text-muted-foreground" /> : <Moon className="w-4 h-4 text-muted-foreground" />}
+            </button>
+            <Button variant="outline" className="hidden sm:flex border-primary text-primary hover:bg-primary hover:text-white" onClick={() => document.getElementById("waitlist")?.scrollIntoView({ behavior: "smooth" })}>
+              Request Early Access
+            </Button>
+          </div>
         </div>
       </nav>
 
