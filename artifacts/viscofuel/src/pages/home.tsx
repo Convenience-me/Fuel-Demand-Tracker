@@ -15,7 +15,6 @@ import { useToast } from "@/hooks/use-toast";
 
 const step1Schema = z.object({
   neighborhood: z.string().min(1, "Please select your neighborhood"),
-  phone: z.string().min(9, "Please enter a valid phone number"),
 });
 
 const step2Schema = z.object({
@@ -53,7 +52,6 @@ export default function Home() {
     resolver: zodResolver(step1Schema),
     defaultValues: {
       neighborhood: "",
-      phone: "",
     },
   });
 
@@ -193,20 +191,6 @@ export default function Home() {
                               ))}
                             </SelectContent>
                           </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form1.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
-                          <FormControl>
-                            <Input placeholder="07XX XXX XXX" className="h-12 bg-background border-border" {...field} />
-                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}

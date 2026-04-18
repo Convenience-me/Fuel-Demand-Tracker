@@ -8,5 +8,4 @@
 
 export interface CreateWaitlistEntry {
   neighborhood: string;
-  phone: string;
 }

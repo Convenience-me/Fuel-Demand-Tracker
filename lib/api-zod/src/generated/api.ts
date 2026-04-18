@@ -21,7 +21,6 @@ export const HealthCheckResponse = zod.object({
  */
 export const CreateWaitlistEntryBody = zod.object({
   neighborhood: zod.string(),
-  phone: zod.string(),
 });
 
 /**
@@ -39,7 +38,7 @@ export const UpdateWaitlistNameBody = zod.object({
 export const UpdateWaitlistNameResponse = zod.object({
   id: zod.number(),
   neighborhood: zod.string(),
-  phone: zod.string(),
+  phone: zod.string().nullish(),
   name: zod.string().nullish(),
   createdAt: zod.string(),
 });

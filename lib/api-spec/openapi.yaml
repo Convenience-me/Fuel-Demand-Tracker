@@ -130,11 +130,8 @@ components:
       properties:
         neighborhood:
           type: string
-        phone:
-          type: string
       required:
         - neighborhood
-        - phone
     UpdateWaitlistName:
       type: object
       properties:
