@@ -3,7 +3,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTheme } from "next-themes";
-import { Clock, ShieldCheck, Calendar, ArrowRight, CheckCircle2, Sun, Moon, Users, MapPin, PhoneCall, BadgeCheck, Fuel } from "lucide-react";
+import { Clock, ShieldCheck, Calendar, ArrowRight, CheckCircle2, Sun, Moon, Users, BadgeCheck, Fuel } from "lucide-react";
 
 import { useCreateWaitlistEntry, useUpdateWaitlistName, useTrackPageView } from "@workspace/api-client-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -30,27 +30,6 @@ const NEIGHBORHOODS = [
   "Langata",
   "South B",
   "South C"
-];
-
-const HOW_IT_WORKS = [
-  {
-    step: "01",
-    icon: Fuel,
-    title: "Request Early Access",
-    desc: "Land on this page and drop your details. Takes under 30 seconds.",
-  },
-  {
-    step: "02",
-    icon: MapPin,
-    title: "Location Drop",
-    desc: "Tell us your neighbourhood so we know where to launch first.",
-  },
-  {
-    step: "03",
-    icon: PhoneCall,
-    title: "Fuel Confirmed",
-    desc: "We call you to confirm the order and arrange delivery to your car.",
-  },
 ];
 
 export default function Home() {
@@ -166,33 +145,6 @@ export default function Home() {
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
               On-demand fuel delivery directly to your car. Skip the petrol station queues and get moving in minutes.
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-20 border-t border-border/50">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-14">
-            <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">How it works</h2>
-            <p className="text-muted-foreground text-lg max-w-xl mx-auto">Three simple steps. No apps to download. No queue to join.</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto relative">
-            <div className="hidden md:block absolute top-10 left-[calc(16.666%+2rem)] right-[calc(16.666%+2rem)] h-px border-t border-dashed border-border/60" />
-            {HOW_IT_WORKS.map(({ step, icon: Icon, title, desc }) => (
-              <div key={step} className="flex flex-col items-center text-center gap-4">
-                <div className="relative">
-                  <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                    <Icon className="w-9 h-9 text-primary" />
-                  </div>
-                  <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center">
-                    {step.replace("0", "")}
-                  </span>
-                </div>
-                <h3 className="font-display text-xl font-bold">{title}</h3>
-                <p className="text-muted-foreground leading-relaxed text-sm max-w-xs">{desc}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
