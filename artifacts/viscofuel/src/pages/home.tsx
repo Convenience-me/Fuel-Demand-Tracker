@@ -10,6 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
 const step1Schema = z.object({
@@ -186,82 +187,48 @@ export default function Home() {
                   </div>
                 </div>
 
-                {!showStep2 ? (
-                  <>
-                    <div className="mb-6">
-                      <h2 className="font-display text-3xl font-bold mb-2">Get early access</h2>
-                      <p className="text-muted-foreground">Tell us where you are so we know where to launch first.</p>
+                <div className="mb-6">
+                  <h2 className="font-display text-3xl font-bold mb-2">Get early access</h2>
+                  <p className="text-muted-foreground">Tell us where you are so we know where to launch first.</p>
+                </div>
+                <Form {...form1}>
+                  <form onSubmit={form1.handleSubmit(onStep1Submit)} className="space-y-6">
+                    <FormField
+                      control={form1.control}
+                      name="neighborhood"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Neighborhood</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="h-12 bg-background border-border">
+                                <SelectValue placeholder="Select your area" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {NEIGHBORHOODS.map((n) => (
+                                <SelectItem key={n} value={n}>{n}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="submit"
+                      className="w-full h-12 text-base font-semibold group"
+                      disabled={createWaitlist.isPending}
+                    >
+                      {createWaitlist.isPending ? "Saving..." : "NEXT"}
+                      {!createWaitlist.isPending && <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}
+                    </Button>
+                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground pt-1">
+                      <Users className="w-4 h-4 text-primary" />
+                      <span>Join <span className="font-semibold text-foreground">50+ Nairobi drivers</span> already on the priority list</span>
                     </div>
-                    <Form {...form1}>
-                      <form onSubmit={form1.handleSubmit(onStep1Submit)} className="space-y-6">
-                        <FormField
-                          control={form1.control}
-                          name="neighborhood"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Neighborhood</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger className="h-12 bg-background border-border">
-                                    <SelectValue placeholder="Select your area" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {NEIGHBORHOODS.map((n) => (
-                                    <SelectItem key={n} value={n}>{n}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <Button
-                          type="submit"
-                          className="w-full h-12 text-base font-semibold group"
-                          disabled={createWaitlist.isPending}
-                        >
-                          {createWaitlist.isPending ? "Saving..." : "NEXT"}
-                          {!createWaitlist.isPending && <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}
-                        </Button>
-                        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground pt-1">
-                          <Users className="w-4 h-4 text-primary" />
-                          <span>Join <span className="font-semibold text-foreground">50+ Nairobi drivers</span> already on the priority list</span>
-                        </div>
-                      </form>
-                    </Form>
-                  </>
-                ) : (
-                  <>
-                    <div className="mb-6">
-                      <h2 className="font-display text-3xl font-bold mb-2">One last thing</h2>
-                      <p className="text-muted-foreground">
-                        We're preparing to launch in <span className="text-primary font-medium">{selectedNeighborhood}</span>. What's your name so we can reach you personally?
-                      </p>
-                    </div>
-                    <Form {...form2}>
-                      <form onSubmit={form2.handleSubmit(onStep2Submit)} className="space-y-6">
-                        <FormField
-                          control={form2.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Full Name</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Your full name" className="h-12 bg-background border-border" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <Button type="submit" className="w-full h-12 text-base font-semibold group" disabled={updateName.isPending}>
-                          {updateName.isPending ? "Saving..." : "CONFIRM"}
-                          {!updateName.isPending && <CheckCircle2 className="ml-2 w-5 h-5" />}
-                        </Button>
-                      </form>
-                    </Form>
-                  </>
-                )}
+                  </form>
+                </Form>
               </>
             )}
           </div>
@@ -362,6 +329,44 @@ export default function Home() {
           <p>Visco Fuel Nairobi - Beta Test Phase - Not live yet</p>
         </div>
       </footer>
+
+      {/* Step 2 Modal */}
+      <Dialog open={showStep2} onOpenChange={(open) => {
+        if (!open) {
+          setShowStep2(false);
+          setCompleted(true);
+        }
+      }}>
+        <DialogContent className="sm:max-w-md bg-card border-border">
+          <DialogHeader>
+            <DialogTitle className="font-display text-2xl">One last thing!</DialogTitle>
+            <DialogDescription className="text-base pt-2">
+              Great! We are preparing to launch in <span className="text-primary font-medium">{selectedNeighborhood}</span>. What's your name so we can address you personally when we call?
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...form2}>
+            <form onSubmit={form2.handleSubmit(onStep2Submit)} className="space-y-6 pt-4">
+              <FormField
+                control={form2.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input placeholder="Your full name" className="h-12 bg-background border-border" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="submit" className="w-full h-12" disabled={updateName.isPending}>
+                  {updateName.isPending ? "Saving..." : "CONFIRM"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );
