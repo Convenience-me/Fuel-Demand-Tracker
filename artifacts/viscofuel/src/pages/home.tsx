@@ -3,7 +3,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTheme } from "next-themes";
-import { Clock, ShieldCheck, Calendar, ArrowRight, CheckCircle2, Sun, Moon, Users, BadgeCheck, Fuel, MapPin, UserRound } from "lucide-react";
+import { Clock, ShieldCheck, Calendar, ArrowRight, CheckCircle2, Sun, Moon, Users, BadgeCheck, Fuel } from "lucide-react";
 
 import { useCreateWaitlistEntry, useUpdateWaitlistName, useTrackPageView } from "@workspace/api-client-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -164,29 +164,6 @@ export default function Home() {
               </div>
             ) : (
               <>
-                {/* Step indicator */}
-                <div className="flex items-center gap-3 mb-8">
-                  <div className={`flex items-center gap-2 flex-1 ${!showStep2 ? "opacity-100" : "opacity-40"}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${!showStep2 ? "bg-primary text-white" : "bg-primary/20 text-primary"}`}>
-                      {showStep2 ? <CheckCircle2 className="w-4 h-4" /> : "1"}
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Step 1</p>
-                      <p className="text-sm font-semibold flex items-center gap-1"><MapPin className="w-3 h-3 text-primary" /> Location Drop</p>
-                    </div>
-                  </div>
-                  <div className="flex-1 h-px border-t border-dashed border-border mx-1" />
-                  <div className={`flex items-center gap-2 flex-1 ${showStep2 ? "opacity-100" : "opacity-40"}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${showStep2 ? "bg-primary text-white" : "bg-muted text-muted-foreground"}`}>
-                      2
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Step 2</p>
-                      <p className="text-sm font-semibold flex items-center gap-1"><UserRound className="w-3 h-3 text-primary" /> Your Name</p>
-                    </div>
-                  </div>
-                </div>
-
                 <div className="mb-6">
                   <h2 className="font-display text-3xl font-bold mb-2">Get early access</h2>
                   <p className="text-muted-foreground">Tell us where you are so we know where to launch first.</p>
@@ -341,7 +318,7 @@ export default function Home() {
           <DialogHeader>
             <DialogTitle className="font-display text-2xl">One last thing!</DialogTitle>
             <DialogDescription className="text-base pt-2">
-              Great! We are preparing to launch in <span className="text-primary font-medium">{selectedNeighborhood}</span>. What's your name so we can address you personally when we call?
+              Great! We are preparing to launch in <span className="text-primary font-medium">{selectedNeighborhood}</span>. How should we contact you when we're ready?
             </DialogDescription>
           </DialogHeader>
           <Form {...form2}>
@@ -351,8 +328,9 @@ export default function Home() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Contact</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your full name" className="h-12 bg-background border-border" {...field} />
+                      <Input placeholder="Phone number or email" className="h-12 bg-background border-border" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
