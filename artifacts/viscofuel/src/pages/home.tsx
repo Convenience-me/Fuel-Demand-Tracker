@@ -341,9 +341,6 @@ export default function Home() {
                   <p className="text-white/70 text-lg mt-1">+ small flat delivery fee</p>
                 </div>
               </div>
-              <p className="text-white/70 text-sm">
-                The pump price is always the official rate — we never mark it up. The flat delivery fee covers the driver and fuel transport.
-              </p>
             </div>
 
           </div>
