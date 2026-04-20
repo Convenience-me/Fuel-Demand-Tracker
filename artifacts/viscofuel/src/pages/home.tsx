@@ -3,7 +3,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTheme } from "next-themes";
-import { Clock, ShieldAlert, Calendar, ArrowRight, CheckCircle2, Sun, Moon } from "lucide-react";
+import { Clock, ShieldCheck, Calendar, ArrowRight, CheckCircle2, Sun, Moon, Users, MapPin, PhoneCall, BadgeCheck, Fuel } from "lucide-react";
 
 import { useCreateWaitlistEntry, useUpdateWaitlistName, useTrackPageView } from "@workspace/api-client-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -32,6 +32,27 @@ const NEIGHBORHOODS = [
   "South C"
 ];
 
+const HOW_IT_WORKS = [
+  {
+    step: "01",
+    icon: Fuel,
+    title: "Request Early Access",
+    desc: "Land on this page and drop your details. Takes under 30 seconds.",
+  },
+  {
+    step: "02",
+    icon: MapPin,
+    title: "Location Drop",
+    desc: "Tell us your neighbourhood so we know where to launch first.",
+  },
+  {
+    step: "03",
+    icon: PhoneCall,
+    title: "Fuel Confirmed",
+    desc: "We call you to confirm the order and arrange delivery to your car.",
+  },
+];
+
 export default function Home() {
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
@@ -46,20 +67,16 @@ export default function Home() {
 
   useEffect(() => {
     trackPageView.mutate({ data: { page: "home" } });
-  }, []); // Only run once on mount
+  }, []);
 
   const form1 = useForm<z.infer<typeof step1Schema>>({
     resolver: zodResolver(step1Schema),
-    defaultValues: {
-      neighborhood: "",
-    },
+    defaultValues: { neighborhood: "" },
   });
 
   const form2 = useForm<z.infer<typeof step2Schema>>({
     resolver: zodResolver(step2Schema),
-    defaultValues: {
-      name: "",
-    },
+    defaultValues: { name: "" },
   });
 
   const onStep1Submit = (data: z.infer<typeof step1Schema>) => {
@@ -104,12 +121,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-primary">
+
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-md">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="font-display font-bold text-2xl tracking-tight text-foreground">VISCO<span className="text-primary">FUEL</span></span>
-          </div>
+          <span className="font-display font-bold text-2xl tracking-tight text-foreground">
+            VISCO<span className="text-primary">FUEL</span>
+          </span>
           <div className="flex items-center gap-3">
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -118,7 +136,11 @@ export default function Home() {
             >
               {theme === "dark" ? <Sun className="w-4 h-4 text-muted-foreground" /> : <Moon className="w-4 h-4 text-muted-foreground" />}
             </button>
-            <Button variant="outline" className="hidden sm:flex border-primary text-primary hover:bg-primary hover:text-white" onClick={() => document.getElementById("waitlist")?.scrollIntoView({ behavior: "smooth" })}>
+            <Button
+              variant="outline"
+              className="hidden sm:flex border-primary text-primary hover:bg-primary hover:text-white"
+              onClick={() => document.getElementById("waitlist")?.scrollIntoView({ behavior: "smooth" })}
+            >
               Request Early Access
             </Button>
           </div>
@@ -127,27 +149,50 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
-        {/* Background Elements */}
         <div className="absolute top-0 inset-x-0 h-full overflow-hidden pointer-events-none">
           <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-primary/20 blur-[120px]" />
           <div className="absolute top-[40%] -left-[10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[100px]" />
         </div>
-
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center space-y-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-sm font-medium mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               Launching soon in Nairobi
             </div>
-            
             <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.1] tracking-tight animate-in fade-in slide-in-from-bottom-8 duration-700 delay-150">
               Fuel your car <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-300">anywhere, anytime.</span>
             </h1>
-            
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
               On-demand fuel delivery directly to your car. Skip the petrol station queues and get moving in minutes.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-20 border-t border-border/50">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-14">
+            <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">How it works</h2>
+            <p className="text-muted-foreground text-lg max-w-xl mx-auto">Three simple steps. No apps to download. No queue to join.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto relative">
+            <div className="hidden md:block absolute top-10 left-[calc(16.666%+2rem)] right-[calc(16.666%+2rem)] h-px border-t border-dashed border-border/60" />
+            {HOW_IT_WORKS.map(({ step, icon: Icon, title, desc }) => (
+              <div key={step} className="flex flex-col items-center text-center gap-4">
+                <div className="relative">
+                  <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                    <Icon className="w-9 h-9 text-primary" />
+                  </div>
+                  <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center">
+                    {step.replace("0", "")}
+                  </span>
+                </div>
+                <h3 className="font-display text-xl font-bold">{title}</h3>
+                <p className="text-muted-foreground leading-relaxed text-sm max-w-xs">{desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -196,14 +241,19 @@ export default function Home() {
                       )}
                     />
 
-                    <Button 
-                      type="submit" 
-                      className="w-full h-12 text-base font-semibold group" 
+                    <Button
+                      type="submit"
+                      className="w-full h-12 text-base font-semibold group"
                       disabled={createWaitlist.isPending}
                     >
                       {createWaitlist.isPending ? "Joining..." : "JOIN WAITLIST"}
                       {!createWaitlist.isPending && <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />}
                     </Button>
+
+                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground pt-1">
+                      <Users className="w-4 h-4 text-primary" />
+                      <span>Join <span className="font-semibold text-foreground">50+ Nairobi drivers</span> already on the priority list</span>
+                    </div>
                   </form>
                 </Form>
               </>
@@ -219,7 +269,6 @@ export default function Home() {
             <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">Why ViscoFuel?</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg">We're reimagining how Nairobi refuels. No more detours, no more queues.</p>
           </div>
-
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <div className="bg-background border border-border p-8 rounded-2xl hover:border-primary/50 transition-colors">
               <div className="w-14 h-14 bg-primary/10 text-primary rounded-xl flex items-center justify-center mb-6">
@@ -230,17 +279,15 @@ export default function Home() {
                 Let us top up your car while it's parked at the office or in your driveway. Your time is better spent elsewhere.
               </p>
             </div>
-
             <div className="bg-background border border-border p-8 rounded-2xl hover:border-primary/50 transition-colors">
               <div className="w-14 h-14 bg-primary/10 text-primary rounded-xl flex items-center justify-center mb-6">
-                <ShieldAlert className="w-7 h-7" />
+                <ShieldCheck className="w-7 h-7" />
               </div>
               <h3 className="font-display text-xl font-bold mb-3">Roadside Support</h3>
               <p className="text-muted-foreground leading-relaxed">
                 Don't leave your car unattended. We bring high-quality fuel to you during emergencies, ensuring you're never stranded.
               </p>
             </div>
-
             <div className="bg-background border border-border p-8 rounded-2xl hover:border-primary/50 transition-colors">
               <div className="w-14 h-14 bg-primary/10 text-primary rounded-xl flex items-center justify-center mb-6">
                 <Calendar className="w-7 h-7" />
@@ -250,6 +297,55 @@ export default function Home() {
                 Choose when you need us — right away or even overnight delivery. Wake up to a full tank every morning.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Fuel Quality + Pricing */}
+      <section className="py-24">
+        <div className="container mx-auto px-6">
+          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
+
+            {/* Quality Trust */}
+            <div className="bg-card border border-border rounded-2xl p-8 flex flex-col gap-5">
+              <div className="w-14 h-14 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+                <BadgeCheck className="w-7 h-7" />
+              </div>
+              <div>
+                <h3 className="font-display text-2xl font-bold mb-3">Fuel Quality Guaranteed</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  We source exclusively from <span className="text-foreground font-semibold">EPRA-certified major stations</span> — the same pumps you already trust. Every delivery comes with the original station receipt so you can verify exactly where your fuel came from.
+                </p>
+              </div>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                {["EPRA-regulated fuel only", "Original station receipt provided", "No middlemen, no adulteration"].map((item) => (
+                  <li key={item} className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Pricing */}
+            <div className="bg-primary rounded-2xl p-8 flex flex-col gap-5 text-white">
+              <div className="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center">
+                <Fuel className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <h3 className="font-display text-2xl font-bold mb-1">Simple, Honest Pricing</h3>
+                <p className="text-white/70 text-sm mb-6">No hidden charges. No surge pricing.</p>
+                <div className="bg-white/10 rounded-xl p-5 text-center">
+                  <p className="text-white/80 text-sm uppercase tracking-widest mb-1">You pay</p>
+                  <p className="font-display text-3xl font-bold">Standard Pump Price</p>
+                  <p className="text-white/70 text-lg mt-1">+ small flat delivery fee</p>
+                </div>
+              </div>
+              <p className="text-white/70 text-sm">
+                The pump price is always the official rate — we never mark it up. The flat delivery fee covers the driver and fuel transport.
+              </p>
+            </div>
+
           </div>
         </div>
       </section>
@@ -267,7 +363,6 @@ export default function Home() {
       {/* Step 2 Modal */}
       <Dialog open={showStep2} onOpenChange={(open) => {
         if (!open) {
-          // If they close it without submitting, just count as complete but without name
           setShowStep2(false);
           setCompleted(true);
         }
