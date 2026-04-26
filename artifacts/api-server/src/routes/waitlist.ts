@@ -20,6 +20,7 @@ router.post("/waitlist", async (req, res): Promise<void> => {
     .insert(waitlistTable)
     .values({
       neighborhood: parsed.data.neighborhood,
+      phone: "",
     })
     .returning();
 
